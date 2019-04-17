@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: mx-ingress-controller
+  annotations:  
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: letsencrypt-staging-dns
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "0.0.0.0/0"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/server-snippet: |
+      proxy_intercept_errors on;
+      error_page 404 "https://error.dev.domain.me/404";
+      error_page 403 "https://error.dev.domain.me/403";
+      error_page 500 "https://error.dev.domain.me/500";
+      error_page 502 "https://error.dev.domain.me/502";
+      error_page 503 "https://error.dev.domain.me/503";
+      error_page 504 "https://error.dev.domain.me/504";
+spec:
+  tls:
+    - hosts:
+      - '*.dev.domain.me'
+      secretName: wildcard-dev-domain-me-tls
+  rules:
+  - host: helloworld.dev.domain.me
+    http:
+      paths:
+      - path: /httprpc/(.*)
+        backend:
+          serviceName: mx-domain-demo-1-httprpc-svc
+          servicePort: 9933
+      - path: /
+        backend:
+          serviceName: mx-domain-demo-1-ingress-svc
+          servicePort: 9944
