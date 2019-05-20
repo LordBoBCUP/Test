@@ -101,7 +101,7 @@ function putS3
 function backupChain() {
   FROM=1
   TO=$1
-  result=$(/bin/substrate export-blocks --from $FROM --to $TO /tmp/backup.bin)
+  result=$(/usr/local/bin/substrate export-blocks --from $FROM --to $TO /tmp/backup.bin)
 }
 
 function Main() {
