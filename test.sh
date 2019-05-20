@@ -106,7 +106,7 @@ function backupChain() {
 
 function Main() {
   validateInput
-  backupChain 
+  backupChain 1000
   putS3 $S3BUCKET /tmp/backup.bin backup.bin $AWS_PATH 
 }
 
