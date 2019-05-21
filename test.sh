@@ -15,7 +15,7 @@ S3SECRET= # pass these in
 S3BUCKET= # Name of the s3 bucket  you are backing up to
 BLOCKNUMBER= # Latest block number you want to backup to
 REGION= # The AWS region e.g us-east-2 where the s3 bucket exists
-
+FILENAME= # The filename of the backup file you are creating
 
 ## Logging ##
 LOGFILE=backup-s3.sh.log
@@ -25,7 +25,7 @@ RETAIN_NUM_LINES=1000
 
 function usage()
 {
-    echo "usage: ./backup-s3.sh [[[-r region ] | [-h]]"
+    echo "usage: ./backup-s3.sh [[[-r | --region region ] [-k | --key s3key] [-b | --bucket bucket] [-s | --secret secret] [-n | --blocknumber blocknumber] [-p | -aws-path path]| [-h]]"
 }
 
 function printUsageAndExit()
@@ -48,8 +48,8 @@ function putS3
 {
   bucket=$1
   path=$2
-  file=$3
-  aws_folder=$4
+  file=$(echo "$path" | sed "s/.*\///")
+  aws_folder=$3
   resource="/${bucket}/${aws_folder}/${file}"
   contentType="binary/octet-stream"
   dateValue=$(date +"%a, %d %b %Y %T %z")
@@ -66,7 +66,6 @@ function putS3
 }
 
   function validateInput() {
-    log here
     if [[ -z "$S3KEY" ]];
     then
       printUsageAndExit
@@ -76,7 +75,6 @@ function putS3
     then
       printUsageAndExit
     fi
-    log here
     if [[  -z "$S3BUCKET" ]];
     then
       printUsageAndExit
@@ -96,18 +94,24 @@ function putS3
     then
       printUsageAndExit
     fi
+
+    if [[  -z "$FILENAME" ]];
+    then
+      printUsageAndExit
+    fi
   }
 
 function backupChain() {
   FROM=1
   TO=$1
-  result=$(/usr/local/bin/substrate export-blocks --from $FROM --to $TO /tmp/backup.bin)
+  FILE=$2
+  result=$(/usr/local/bin/substrate export-blocks --from $FROM --to $TO /tmp/${FILE})
 }
 
 function Main() {
   validateInput
-  backupChain 1000
-  putS3 $S3BUCKET /tmp/backup.bin backup.bin $AWS_PATH 
+  backupChain 1000 $FILENAME
+  putS3 $S3BUCKET /tmp/${FILENAME} $AWS_PATH 
 }
 
 
@@ -134,6 +138,9 @@ while [ "$1" != "" ]; do
                                 ;;
         -r | --region )         shift 
                                 REGION=$1
+                                ;;
+        -f | --filename )       shift 
+                                FILENAME=$1
                                 ;;
         -h | --help )           usage
                                 exit
