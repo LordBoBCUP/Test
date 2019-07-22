@@ -13,7 +13,7 @@ nodeGroups:
     desiredCapacity: 2
     minSize: 1
     maxSize: 10
-    volumeSize: 20
+    volumeSize: 200
     privateNetworking: true
     availabilityZones: a
     ssh:
@@ -28,7 +28,7 @@ nodeGroups:
     desiredCapacity: 2
     minSize: 1
     maxSize: 10
-    volumeSize: 20
+    volumeSize: 200
     privateNetworking: true
     availabilityZones: b
     ssh:
