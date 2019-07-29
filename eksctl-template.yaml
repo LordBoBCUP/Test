@@ -9,11 +9,11 @@ metadata:
 nodeGroups:
   - name: a
     labels: {role: workers}
-    instanceType: c5.xlarge
-    desiredCapacity: 2
+    instanceType: c5.4xlarge
+    desiredCapacity: 1
     minSize: 1
     maxSize: 10
-    volumeSize: 200
+    volumeSize: 100
     privateNetworking: true
     availabilityZones: a
     ssh:
@@ -22,20 +22,5 @@ nodeGroups:
       withAddonPolicies:
         autoScaler: true
 
-  - name: b
-    labels: {role: workers}
-    instanceType: c5.xlarge
-    desiredCapacity: 2
-    minSize: 1
-    maxSize: 10
-    volumeSize: 200
-    privateNetworking: true
-    availabilityZones: b
-    ssh:
-      publicKeyPath: /home/bob/id_rsa4096.pub
-    iam:
-      withAddonPolicies:
-        autoScaler: true
-
 # cluster AZs must be set explicitly for single AZ nodegroup example to work
-availabilityZones: ab
+availabilityZones: a
