@@ -21,6 +21,3 @@ nodeGroups:
     iam:
       withAddonPolicies:
         autoScaler: true
-
-# cluster AZs must be set explicitly for single AZ nodegroup example to work
-availabilityZones: a
